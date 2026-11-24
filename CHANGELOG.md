@@ -7,6 +7,16 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) once it reache
 
 ## [Unreleased]
 
+### Added — rate history minimum-data rule for estimated prices ([#598](https://github.com/corridor-in-a-box/corridor-in-a-box/issues/598))
+
+- `@corridor/router` exports `assessRateHistory` (`packages/router/src/rate-history.ts`): given the
+  rate history held for a pair at an anchor, it answers whether an `estimated` price may be shown
+  at all, per RFC 0004 §3 — at least 7 days of data and at least 100 samples in the window, both
+  thresholds configurable. When the history is deep enough it returns the P25 rate (nearest-rank,
+  an observed rate returned verbatim, ordered by exact decimal value) and the sample count; below
+  either threshold, or on a malformed or non-positive rate, it returns the reason instead, so a
+  pair with too little history stays unpriceable rather than wearing a made-up price.
+
 ### Added — conformance test kit for planners ([#616](https://github.com/corridor-in-a-box/corridor-in-a-box/issues/616))
 
 - `@corridor/router/testing` exports `describePlannerContract`, `checkPlannerContract` and
