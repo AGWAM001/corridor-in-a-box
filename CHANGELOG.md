@@ -20,6 +20,36 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) once it reache
   outlier-flagged samples are left out) and the same P25. Window and both thresholds are
   configurable.
 
+### Added — router ranking function ([#611](https://github.com/corridor-in-a-box/corridor-in-a-box/issues/611))
+
+- `rank(options, { estimateMarginBps })` in `@corridor/router` orders route options per RFC 0004
+  §1 "Ranking": by the cautious recipient amount, then reliability, then delivery time, then
+  receiving domain, with no hidden weights. It is pure: it returns a new array and never
+  changes its input, and options equal on every key keep their input order.
+- The cautious amount comes from the price label: a `locked` amount as quoted, an `indicative`
+  or `estimated` (P25) amount minus the estimate margin (default 50 bps, RFC 0004 D3).
+  `cautiousRecipientAmount` exposes that step. Amounts stay decimal strings on scaled BigInts.
+- Domains compare by code unit, so the order is the same under every locale. A malformed or
+  negative amount, an unknown label, a reliability outside 0..1 or options in different assets
+  throw a `RangeError` instead of ranking silently wrong.
+- A full `RouteOption` can be ranked directly. Property tests use the repo's seeded generator:
+  the result is a permutation of the input and stable for equal inputs.
+
+### Added — estimate gap when a business guarantees estimated prices ([#627](https://github.com/corridor-in-a-box/corridor-in-a-box/issues/627))
+
+- With `guaranteeEstimates` on (`EngineDeps` or `ExecuteOptions`, RFC 0004 D4), the engine
+  records `estimateGap` on the run: the anchor's actual payout minus the guaranteed amount,
+  computed with decimal-safe money arithmetic. Positive is a gain, negative a loss the business
+  absorbed, zero an exact match. Nothing is recorded when the option is off.
+- The guaranteed amount defaults to the quote's `destAmount` and can be set with
+  `ExecuteOptions.guaranteedAmount`. The actual amount comes from the anchor's reported
+  `amountOut` (or `ExecuteOptions.actualAmount`).
+- `TransactionStatus` and `OpenTransaction` gain an optional `amountOut`. The SEP-31 and SEP-6
+  adapters read `amount_out` in `amount_out_asset`, falling back to the corridor's dest asset.
+- `estimateGap` is stored in a new nullable `estimate_gap` column on `corridor_runs` (added by
+  `migrate()` on existing tables), read back by `get()` and `listByState()`, and returned on
+  `RunResult` and `GET /payments/:key` (`RunStatus` in `openapi.yaml`).
+
 ### Added — `reliability()` score for receiving anchors ([#612](https://github.com/corridor-in-a-box/corridor-in-a-box/issues/612))
 
 - `reliability(anchor, deps)` in `@corridor/router` scores a receiving anchor from 0 to 1 (RFC
