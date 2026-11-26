@@ -11,11 +11,15 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) once it reache
 
 - `@corridor/router` exports `assessRateHistory` (`packages/router/src/rate-history.ts`): given the
   rate history held for a pair at an anchor, it answers whether an `estimated` price may be shown
-  at all, per RFC 0004 §3 — at least 7 days of data and at least 100 samples in the window, both
-  thresholds configurable. When the history is deep enough it returns the P25 rate (nearest-rank,
-  an observed rate returned verbatim, ordered by exact decimal value) and the sample count; below
-  either threshold, or on a malformed or non-positive rate, it returns the reason instead, so a
-  pair with too little history stays unpriceable rather than wearing a made-up price.
+  at all, per RFC 0004 §3: at least 100 samples in the 7-day window, and a history reaching back
+  at least 7 days (`now` minus the oldest usable sample, measured over all the history passed in).
+  It returns `{ ok: true, p25, samples }` or `{ ok: false, reason }`.
+- It asks `buildEstimatedOption` rather than re-implementing the rule, so both use the same
+  defaults (`DEFAULT_MIN_ESTIMATE_SAMPLES`, `DEFAULT_MIN_ESTIMATE_SPAN_DAYS`,
+  `DEFAULT_ESTIMATE_WINDOW_DAYS`), the same sample filtering (malformed, non-positive, future and
+  outlier-flagged samples are left out) and the same P25. Window and both thresholds are
+  configurable.
+
 ### Added — Rate history page ([#601](https://github.com/corridor-in-a-box/corridor-in-a-box/issues/601))
 
 - `docs/rate-history.md` documents rate history per RFC 0004 §3: the four sources (SEP-38

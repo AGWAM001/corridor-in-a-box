@@ -257,13 +257,5 @@ export type {
 } from "./pinned-resolver";
 // Rate history: the minimum-data rule that decides whether a pair at an
 // anchor may carry an `estimated` price at all (RFC 0004 §3).
-export {
-  assessRateHistory,
-  DEFAULT_ESTIMATE_MIN_DAYS,
-  DEFAULT_ESTIMATE_MIN_SAMPLES,
-} from "./rate-history";
-export type {
-  EstimateAssessment,
-  EstimateThresholds,
-  RateHistorySample,
-} from "./rate-history";
+export { assessRateHistory } from "./rate-history";
+export type { EstimateAssessment, EstimateThresholds } from "./rate-history";
