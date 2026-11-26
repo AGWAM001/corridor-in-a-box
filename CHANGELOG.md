@@ -19,6 +19,7 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) once it reache
   `DEFAULT_ESTIMATE_WINDOW_DAYS`), the same sample filtering (malformed, non-positive, future and
   outlier-flagged samples are left out) and the same P25. Window and both thresholds are
   configurable.
+
 ### Added — lane check v1: authorised GET /sep31/info probe ([#632](https://github.com/corridor-in-a-box/corridor-in-a-box/issues/632))
 
 - `checkLane` in `@corridor/router` now runs two steps: the SEP-10 login through
