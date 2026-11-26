@@ -19,6 +19,7 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) once it reache
   `DEFAULT_ESTIMATE_WINDOW_DAYS`), the same sample filtering (malformed, non-positive, future and
   outlier-flagged samples are left out) and the same P25. Window and both thresholds are
   configurable.
+
 ### Added — Planner step 1: `candidates()` by destination asset and country ([#604](https://github.com/corridor-in-a-box/corridor-in-a-box/issues/604))
 
 - `candidates(request, corridors)` in `@corridor/router` returns every configured corridor whose
